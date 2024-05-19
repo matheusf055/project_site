@@ -1,8 +1,5 @@
 <?php
 session_start();
-
-$total = 0;
-
 ?>
 
 <!DOCTYPE html>
@@ -29,13 +26,18 @@ $total = 0;
                         <li><a href="/projeto/usar para trabalho/Html/quem-somos.php">Quem somos</a></li>
                         <li><a href="/projeto/usar para trabalho/Html/fale-conosco.php">Fale conosco</a></li>
                         <li>
-                            <?php
+                        <?php
+                            // Verifica se a sessão contém o valor 'name'
                             if (isset($_SESSION['name'])) {
-                                echo "<a>Olá, " . htmlspecialchars($_SESSION['name']) . "!</a>";
+                                // Se a sessão contém o valor 'name', exibe uma mensagem de boas-vindas
+                                // 'htmlspecialchars' é usado para evitar ataques de Cross-Site Scripting (XSS) escapando caracteres especiais
+                                echo "<p>Olá, " . htmlspecialchars($_SESSION['name']) . "!</p>";
                             } else {
-                                echo "<a href='login.php'>Você não está logado: Login</a>";
+                                // Se a sessão não contém o valor 'name', exibe uma mensagem informando que o usuário não está logado
+                                // Inclui um link para a página de login
+                                echo "<p>Você não está logado <a href='login.php'>: Login</a></p>";
                             }
-                            ?>
+                        ?>
                         </li>
                         <li><a href="/projeto/usar para trabalho/Html/sair.php">Sair</a></li>
                         <li>
@@ -57,47 +59,69 @@ $total = 0;
             <th>Valor</th>
         </tr>
 
-        <?php
+    <?php
+        // Inicializa a variável $total para armazenar o total do carrinho
+        $total = 0;
+        
+        // Verifica se o carrinho está definido na sessão do usuário
         if (isset($_SESSION['carrinho'])) {
+            // Loop pelos itens no carrinho
             foreach ($_SESSION['carrinho'] as $indice => $produto) {
+                // Obtém a quantidade do produto, se não estiver definida, assume 1
                 $quantidade = isset($produto['quantidade']) ? $produto['quantidade'] : 1;
+                
+                // Calcula o subtotal do produto (preço * quantidade)
                 $subtotal = floatval(str_replace('R$', '', str_replace(',', '.', $produto['preco']))) * intval($quantidade);
+                
+                // Adiciona o subtotal ao total do carrinho
                 $total += $subtotal;
         ?>
-                <tr>
-                    <td>
-                        <div class="info-carrinho">
-                            <img src="<?php echo $produto['imgSrc']; ?>" alt="">
-                            <div>
-                                <p><?php echo $produto['titulo']; ?></p>
-                                <small>Valor: <?php echo $produto['preco']; ?></small>
-                                <br>
-                                <a href="remover-carrinho.php?indice=<?php echo $indice; ?>" title="">Remover</a>
-                            </div>
-                        </div>
-                    </td>
+        <tr>
+            <td>
+                <div class="info-carrinho">
+                    <!-- Exibe a imagem do produto -->
+                    <img src="<?php echo $produto['imgSrc']; ?>" alt="">
+                    <div>
+                        <!-- Exibe o título do produto -->
+                        <p><?php echo $produto['titulo']; ?></p>
+                        <!-- Exibe o preço do produto -->
+                        <small>Valor: <?php echo $produto['preco']; ?></small>
+                        <br>
+                        <!-- Adiciona um link para remover o produto do carrinho -->
+                        <a href="remover-carrinho.php?indice=<?php echo $indice; ?>" title="">Remover</a>
+                    </div>
+                </div>
+            </td>
 
-                    <td>
-                        <span><?php echo $quantidade; ?></span>
-                    </td>
+            <td>
+                <!-- Exibe a quantidade do produto -->
+                <span><?php echo $quantidade; ?></span>
+            </td>
 
-                    <td><?php echo 'R$ ' . number_format($subtotal, 2, ',', '.'); ?></td>
-                </tr>
-        <?php
-            }
+            <td>
+                <!-- Exibe o subtotal do produto formatado -->
+                <?php echo 'R$ ' . number_format($subtotal, 2, ',', '.'); ?>
+            </td>
+        </tr>
+    <?php
         }
-        ?>
+    }
+    ?>
     </table>
 
     <div class="valor-total">
         <table>
+            <!-- Linha para o Sub-Total -->
             <tr>
                 <td>Sub-Total</td>
+                <!-- Exibe o subtotal formatado -->
                 <td><?php echo 'R$ ' . number_format($total, 2, ',', '.'); ?></td>
             </tr>
-           
+        
+            <!-- Linha para o Total -->
             <tr>
                 <td>Total</td>
+                <!-- Exibe o total formatado -->
                 <td><?php echo 'R$ ' . number_format($total, 2, ',', '.'); ?></td>
             </tr>
         </table>

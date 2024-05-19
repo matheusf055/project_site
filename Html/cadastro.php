@@ -1,55 +1,76 @@
 <?php
-if(isset($_POST["submit"])){
+if (isset($_POST["submit"])) { // Verifica se o formulário foi enviado após apertar no botão submit
+
+    // Inclui o acesso ao banco de dados
     include "config.php";
+
+    // Escapa caracteres especiais para evitar SQL Injection
     $username = mysqli_real_escape_string($conn, $_POST['user']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['pass']);
     $cpassword = mysqli_real_escape_string($conn, $_POST['cpass']);
 
-    $sql = "SELECT * FROM users WHERE username = '$username' ";
+    // Verifica se o nome de usuário existe no banco de dados
+    $sql = "SELECT * FROM users WHERE username = '$username'";
     $result_user = mysqli_query($conn, $sql);
-    if($result_user === false) {
+    if ($result_user === false) {
+        // Mostra mensagem caso a consulta falhe 
         echo "Erro na consulta SQL: " . mysqli_error($conn);
         exit();
     }
+    // Conta o número de linhas retornadas pelo SQL
     $count_user = mysqli_num_rows($result_user);
 
-    $sql = "SELECT * FROM users WHERE email = '$email' ";
+    // Verifica se o Email existe no banco de dados
+    $sql = "SELECT * FROM users WHERE email = '$email'";
     $result_email = mysqli_query($conn, $sql);
-    if($result_email === false) {
+    if ($result_email === false) {
+        // Mostra mensagem caso a consulta falhe 
         echo "Erro na consulta SQL: " . mysqli_error($conn);
         exit();
     }
+    // Conta o número de linhas retornadas pelo SQL
     $count_email = mysqli_num_rows($result_email);
 
-    if($count_user == 0 && $count_email == 0){
-        if($password == $cpassword){
+    // Verifica se o nome de usuário ou email existem no banco de dados
+    if ($count_user == 0 && $count_email == 0) {
+        // Verifica se as senhas são iguais
+        if ($password == $cpassword) {
+            // Cria um hash da senha para armazenamento seguro
             $hash = password_hash($password, PASSWORD_DEFAULT);
+            // Insere o novo usuário no banco de dados
             $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$hash')";
             $result_insert = mysqli_query($conn, $sql);
-            if($result_insert === false) {
+            if ($result_insert === false) {
+                // Mostra mensagem caso a inserção falhe
                 echo "Erro na inserção de dados: " . mysqli_error($conn);
                 exit();
             }
-        }
-        else{
+            // Inicia a sessão e armazena o nome do usuário na sessão
+            session_start();
+            $_SESSION['name'] = $username;
+
+            // Redireciona para index.php
+            header("Location: index.php");
+            exit();
+        } else {
+            // Mostra um alerta se as senhas forem diferentes
             echo '<script>
             alert("Senhas diferentes!!!");
             window.location.href = "cadastro.php";
             </script>';
             exit();
         }
-    }
-    else{
+    } else {
+        // Mostra um alerta se o usuário ou email já foram cadastrados
         echo '<script>
         alert("Usuário ou email já cadastrado!!!");
-        window.location.href = "index.php";
+        window.location.href = "cadastro.php";
         </script>';
         exit();
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

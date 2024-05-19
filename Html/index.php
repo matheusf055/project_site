@@ -32,12 +32,17 @@
                         <li><a href="/projeto/usar para trabalho/Html/fale-conosco.php" title="">Fale conosco</a></li>
                         <li class="php">
                         <?php
+                            // Verifica se a sessão contém o valor 'name'
                             if (isset($_SESSION['name'])) {
+                                // Se a sessão contém o valor 'name', exibe uma mensagem de boas-vindas
+                                // 'htmlspecialchars' é usado para evitar ataques de Cross-Site Scripting (XSS) escapando caracteres especiais
                                 echo "<p>Olá, " . htmlspecialchars($_SESSION['name']) . "!</p>";
                             } else {
+                                // Se a sessão não contém o valor 'name', exibe uma mensagem informando que o usuário não está logado
+                                // Inclui um link para a página de login
                                 echo "<p>Você não está logado <a href='login.php'>: Login</a></p>";
                             }
-                            ?>
+                        ?>
                         </li>
                         <li><a href="/projeto/usar para trabalho/Html/sair.php" title="">Sair</a></li>
                         

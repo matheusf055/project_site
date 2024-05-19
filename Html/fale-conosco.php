@@ -10,36 +10,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = $_POST['email'];
         $mensagem = $_POST['message'];
 
-        // Configurações de conexão com o banco de dados
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "db";
-
-        // Cria a conexão
-        $conn = new mysqli($servername, $username, $password, $dbname, 3306);
-
-        // Verifica a conexão
-        if ($conn->connect_error) {
-            die("Erro de conexão: " . $conn->connect_error);
-        }
+        include "config.php";
 
         // Prepara e executa a query SQL para inserir a mensagem no banco de dados
         $sql = "INSERT INTO mensagens (nome, email, mensagem) VALUES ('$nome', '$email', '$mensagem')";
         if ($conn->query($sql) === TRUE) {
+            //Passa uma mensagem em branco caso de certo
             echo "";
         } else {
+            //Mostra que deu erro ao registrar a mensagem
             echo "Erro ao registrar a mensagem: " . $conn->error;
         }
 
         // Fecha a conexão
         $conn->close();
+
     } else {
+        //Erro se algum campo do formulário não for preenchido
         echo "Todos os campos do formulário devem ser preenchidos.";
     }
+
+    //Mostra na tela que a mensagem foi enviada
+    echo '<script>
+    alert("Mensagem enviada");
+    window.location.href = "fale-conosco.php";
+    </script>';
+    exit();
 } 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -66,13 +64,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <li><a href="/projeto/usar para trabalho/Html/quem-somos.php">Quem somos</a></li>
                         <li><a href="/projeto/usar para trabalho/Html/fale-conosco.php">Fale conosco</a></li>
                         <li>
-                            <?php
+                        <?php
+                            // Verifica se a sessão contém o valor 'name'
                             if (isset($_SESSION['name'])) {
-                                echo "<a>Olá, " . htmlspecialchars($_SESSION['name']) . "!</a>";
+                                // Se a sessão contém o valor 'name', exibe uma mensagem de boas-vindas
+                                // 'htmlspecialchars' é usado para evitar ataques de Cross-Site Scripting (XSS) escapando caracteres especiais
+                                echo "<p>Olá, " . htmlspecialchars($_SESSION['name']) . "!</p>";
                             } else {
-                                echo "<a href='login.php'>Você não está logado: Login</a>";
+                                // Se a sessão não contém o valor 'name', exibe uma mensagem informando que o usuário não está logado
+                                // Inclui um link para a página de login
+                                echo "<p>Você não está logado <a href='login.php'>: Login</a></p>";
                             }
-                            ?>
+                        ?>
                         </li>
                         <li><a href="/projeto/usar para trabalho/Html/sair.php">Sair</a></li>
                         <li>

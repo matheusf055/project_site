@@ -1,29 +1,37 @@
 <?php
-if (isset($_POST["submit"])) {
+if (isset($_POST["submit"])) {// Verifica se o formulário foi enviado após apertar no botão submit
+    // Inclui o acesso ao banco de dados
     include "config.php";
-    
+
+    // Escapa caracteres especiais para evitar SQL Injection
     $username = mysqli_real_escape_string($conn, $_POST['user']);
     $password = mysqli_real_escape_string($conn, $_POST['pass']);
     
+    // Verifica se o nome de usuário ou email existe no banco de dados
     $sql = "SELECT * FROM users WHERE username = '$username' OR email = '$username'";
     $result = mysqli_query($conn, $sql);
     
+    //Verifica se algum usuario foi encontrado
     if ($result && mysqli_num_rows($result) > 0) {
+        //Extrai os dados encontrados
         $row = mysqli_fetch_assoc($result);
         
+        //Verifica se a senha está no banco de dados
         if (password_verify($password, $row['password'])) {
+            //Inicia a sessão se der tudo certo
             session_start();
             $_SESSION['name'] = $row['username'];
-            echo '<script>
-                  window.location.href = "index.php";
-                  </script>';
+            //Leva para a index
+            header("Location: index.php");
         } else {
+            // Mostra um alerta se as senha for invalida
             echo '<script>
                   alert("Senha inválida!!!");
                   window.location.href = "login.php";
                   </script>';
         }
     } else {
+        // Mostra um alerta se o usuário ou email já forem invalidos
         echo '<script>
               alert("Usuário inválido!!!");
               window.location.href = "login.php";

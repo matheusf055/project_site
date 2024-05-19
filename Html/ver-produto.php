@@ -1,6 +1,7 @@
 <?php 
     session_start(); 
     
+    //Define um array de produtos 
     $produto = [
         'imgSrc' => isset($_GET['imgSrc']) ? $_GET['imgSrc'] : '',
         'titulo' => isset($_GET['titulo']) ? $_GET['titulo'] : '',
@@ -34,13 +35,18 @@
                         <li><a href="/projeto/usar para trabalho/Html/quem-somos.php">Quem somos</a></li>
                         <li><a href="/projeto/usar para trabalho/Html/fale-conosco.php">Fale conosco</a></li>
                         <li>
-                            <?php
+                        <?php
+                            // Verifica se a sessão contém o valor 'name'
                             if (isset($_SESSION['name'])) {
-                                echo "<a>Olá, " . htmlspecialchars($_SESSION['name']) . "!</a>";
+                                // Se a sessão contém o valor 'name', exibe uma mensagem de boas-vindas
+                                // 'htmlspecialchars' é usado para evitar ataques de Cross-Site Scripting (XSS) escapando caracteres especiais
+                                echo "<p>Olá, " . htmlspecialchars($_SESSION['name']) . "!</p>";
                             } else {
-                                echo "<a href='login.php'>Você não está logado: Login</a>";
+                                // Se a sessão não contém o valor 'name', exibe uma mensagem informando que o usuário não está logado
+                                // Inclui um link para a página de login
+                                echo "<p>Você não está logado <a href='login.php'>: Login</a></p>";
                             }
-                            ?>
+                        ?>
                         </li>
                         <li><a href="/projeto/usar para trabalho/Html/sair.php">Sair</a></li>
                         <li>
@@ -59,21 +65,31 @@
     <div class="corpo-categorias ver-produto">
         <div class="espaço">
             <div class="imagens-espaço">
+                <!-- Exibe a imagem do produto -->
                 <img src="<?php echo $produto['imgSrc']; ?>" alt="" id="produtoImg">
             </div>
             <div class="imagens-espaço">
+                <!-- Exibe o título do produto -->
                 <h1 id="tituloProduto"><?php echo $produto['titulo']; ?></h1>
+                <!-- Exibe uma mensagem -->
                 <p>Compre com desconto</p>
+                <!-- Exibe o preço do produto -->
                 <h4 id="precoProduto"><?php echo $produto['preco']; ?></h4>
+                <!-- Formulário para adicionar o produto ao carrinho -->
                 <form action="adicionar-carrinho.php" method="post">
+                    <!-- Campos ocultos com informações do produto -->
                     <input type="hidden" name="imgSrc" value="<?php echo $produto['imgSrc']; ?>">
                     <input type="hidden" name="titulo" value="<?php echo $produto['titulo']; ?>">
                     <input type="hidden" name="preco" value="<?php echo $produto['preco']; ?>">
                     <input type="hidden" name="descricao" value="<?php echo $produto['descricao']; ?>">
+                    <!-- Campo para selecionar a quantidade -->
                     <input type="number" name="quantidade" value="1" min="1">
+                    <!-- Botão para adicionar ao carrinho -->
                     <button type="submit" class="btn">Adicionar ao Carrinho</button>
                 </form>
+                <!-- Título para a descrição do produto -->
                 <h3>Descrição:</h3>
+                <!-- Exibe a descrição do produto -->
                 <p id="descricaoProduto"><?php echo $produto['descricao']; ?></p>
             </div>
         </div>
