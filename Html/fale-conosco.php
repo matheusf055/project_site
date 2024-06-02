@@ -1,5 +1,6 @@
 <?php
 session_start();
+include "config.php";
 
 // Verifica se os dados do formulário foram enviados
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -9,8 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $nome = $_POST['nome'];
         $email = $_POST['email'];
         $mensagem = $_POST['message'];
-
-        include "config.php";
 
         // Prepara e executa a query SQL para inserir a mensagem no banco de dados
         $sql = "INSERT INTO mensagens (nome, email, mensagem) VALUES ('$nome', '$email', '$mensagem')";
@@ -28,6 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         //Erro se algum campo do formulário não for preenchido
         echo "Todos os campos do formulário devem ser preenchidos.";
+    }
+
+    if (!isset($_SESSION['name'])) {
+        //Mostra mensagem caso tente enviar uma menssagem sem estar logado
+        echo "<script>
+                alert('Você precisa estar logado para enviar uma menssagem.');
+                window.location.href = 'fale-conosco.php';
+              </script>";
+        exit();
     }
 
     //Mostra na tela que a mensagem foi enviada

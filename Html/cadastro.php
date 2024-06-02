@@ -1,14 +1,33 @@
 <?php
+// Inclui o acesso ao banco de dados
+include "config.php";
+   
 if (isset($_POST["submit"])) { // Verifica se o formulário foi enviado após apertar no botão submit
-
-    // Inclui o acesso ao banco de dados
-    include "config.php";
 
     // Escapa caracteres especiais para evitar SQL Injection
     $username = mysqli_real_escape_string($conn, $_POST['user']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['pass']);
     $cpassword = mysqli_real_escape_string($conn, $_POST['cpass']);
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        // Mostra um alerta se o e-mail não for válido
+        echo '<script>
+        alert("E-mail inválido!!!");
+        window.location.href = "cadastro.php";
+        </script>';
+        exit();
+    }
+
+    // Verifica se a senha tem mais de 6 caracteres
+    if (strlen($password) < 6) {
+        // Mostra um alerta se a senha tiver menos de 6 caracteres
+        echo '<script>
+        alert("A senha deve ter pelo menos 6 caracteres!!!");
+        window.location.href = "cadastro.php";
+        </script>';
+        exit();
+    }
 
     // Verifica se o nome de usuário existe no banco de dados
     $sql = "SELECT * FROM users WHERE username = '$username'";
